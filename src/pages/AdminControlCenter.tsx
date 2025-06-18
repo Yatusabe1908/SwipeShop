@@ -547,6 +547,358 @@ const AdminControlCenter = () => {
             </div>
           </TabsContent>
 
+          {/* Product Details Tab */}
+          <TabsContent value="product-details" className="space-y-6">
+            <div className="grid grid-cols-1 gap-6">
+              <Card className="bg-black/20 border-white/10">
+                <CardHeader className="border-b border-white/10">
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Package className="w-5 h-5" />
+                    Detailed Product Analytics
+                    <Badge className="bg-blue-500/20 text-blue-400 ml-auto">
+                      {liveMetrics.topProducts.length} Products with Data
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  {liveMetrics.topProducts.length > 0 ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {liveMetrics.topProducts.map((product, index) => {
+                        const totalActions = product.swipes;
+                        const likeActions = activities.filter(
+                          (a) =>
+                            a.productId === product.productId &&
+                            a.type === "swipe_action" &&
+                            a.action === "like",
+                        ).length;
+                        const loveItActions = activities.filter(
+                          (a) =>
+                            a.productId === product.productId &&
+                            a.type === "swipe_action" &&
+                            a.action === "Love It",
+                        ).length;
+                        const nopeActions = activities.filter(
+                          (a) =>
+                            a.productId === product.productId &&
+                            a.type === "swipe_action" &&
+                            a.action === "dislike",
+                        ).length;
+
+                        const likePercent =
+                          totalActions > 0
+                            ? (likeActions / totalActions) * 100
+                            : 0;
+                        const loveItPercent =
+                          totalActions > 0
+                            ? (loveItActions / totalActions) * 100
+                            : 0;
+                        const nopePercent =
+                          totalActions > 0
+                            ? (nopeActions / totalActions) * 100
+                            : 0;
+
+                        const engagementScore = likePercent + loveItPercent;
+
+                        return (
+                          <motion.div
+                            key={product.productId}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all"
+                          >
+                            {/* Product Header */}
+                            <div className="flex items-center gap-3 mb-4">
+                              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold">
+                                #{index + 1}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="text-white font-semibold text-sm truncate">
+                                  {product.title}
+                                </h3>
+                                <p className="text-gray-400 text-xs">
+                                  {product.views} views • {totalActions} swipes
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Engagement Score */}
+                            <div className="mb-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-gray-300 text-sm">
+                                  Engagement Score
+                                </span>
+                                <span
+                                  className={`font-bold text-sm ${
+                                    engagementScore >= 70
+                                      ? "text-green-400"
+                                      : engagementScore >= 40
+                                        ? "text-yellow-400"
+                                        : "text-red-400"
+                                  }`}
+                                >
+                                  {engagementScore.toFixed(1)}%
+                                </span>
+                              </div>
+                              <div className="w-full bg-white/10 rounded-full h-2">
+                                <div
+                                  className={`h-2 rounded-full transition-all duration-500 ${
+                                    engagementScore >= 70
+                                      ? "bg-gradient-to-r from-green-400 to-green-500"
+                                      : engagementScore >= 40
+                                        ? "bg-gradient-to-r from-yellow-400 to-yellow-500"
+                                        : "bg-gradient-to-r from-red-400 to-red-500"
+                                  }`}
+                                  style={{
+                                    width: `${Math.min(engagementScore, 100)}%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Action Breakdown */}
+                            <div className="space-y-3">
+                              {/* Love It Actions */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <Star
+                                    className="w-4 h-4 text-purple-400"
+                                    fill="currentColor"
+                                  />
+                                  <span className="text-gray-300 text-sm">
+                                    Love It
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-purple-400 font-semibold text-sm">
+                                    {loveItActions}
+                                  </span>
+                                  <span className="text-gray-500 text-xs">
+                                    ({loveItPercent.toFixed(1)}%)
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Like Actions */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <Heart
+                                    className="w-4 h-4 text-green-400"
+                                    fill="currentColor"
+                                  />
+                                  <span className="text-gray-300 text-sm">
+                                    Like
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-green-400 font-semibold text-sm">
+                                    {likeActions}
+                                  </span>
+                                  <span className="text-gray-500 text-xs">
+                                    ({likePercent.toFixed(1)}%)
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Nope Actions */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <X className="w-4 h-4 text-red-400" />
+                                  <span className="text-gray-300 text-sm">
+                                    Nope
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400 font-semibold text-sm">
+                                    {nopeActions}
+                                  </span>
+                                  <span className="text-gray-500 text-xs">
+                                    ({nopePercent.toFixed(1)}%)
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Quick Stats */}
+                            <div className="mt-4 pt-4 border-t border-white/10">
+                              <div className="grid grid-cols-2 gap-4 text-center">
+                                <div>
+                                  <div className="text-white font-bold text-lg">
+                                    {product.conversions}
+                                  </div>
+                                  <div className="text-gray-400 text-xs">
+                                    Conversions
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-white font-bold text-lg">
+                                    {totalActions > 0
+                                      ? (
+                                          (product.conversions / totalActions) *
+                                          100
+                                        ).toFixed(1)
+                                      : 0}
+                                    %
+                                  </div>
+                                  <div className="text-gray-400 text-xs">
+                                    Conversion Rate
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Performance Indicator */}
+                            <div className="mt-4">
+                              <div
+                                className={`text-center py-2 px-3 rounded-lg text-xs font-medium ${
+                                  engagementScore >= 70
+                                    ? "bg-green-500/20 text-green-400"
+                                    : engagementScore >= 40
+                                      ? "bg-yellow-500/20 text-yellow-400"
+                                      : engagementScore >= 20
+                                        ? "bg-orange-500/20 text-orange-400"
+                                        : "bg-red-500/20 text-red-400"
+                                }`}
+                              >
+                                {engagementScore >= 70
+                                  ? "🔥 Hot Product"
+                                  : engagementScore >= 40
+                                    ? "📈 Good Performance"
+                                    : engagementScore >= 20
+                                      ? "⚠️ Needs Attention"
+                                      : "❌ Poor Performance"}
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-gray-400">
+                      <Package className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                      <h3 className="text-lg font-semibold mb-2">
+                        No Product Data Yet
+                      </h3>
+                      <p className="mb-4">
+                        Product analytics will appear as customers interact with
+                        your products.
+                      </p>
+                      <div className="text-sm text-gray-500">
+                        <p>💜 Love It = Add to cart</p>
+                        <p>💖 Like = Add to favorites</p>
+                        <p>❌ Nope = Not interested</p>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Detailed Statistics Cards */}
+              {liveMetrics.topProducts.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Average Metrics */}
+                  {(() => {
+                    const avgLikes =
+                      liveMetrics.topProducts.reduce((sum, p) => {
+                        const likes = activities.filter(
+                          (a) =>
+                            a.productId === p.productId &&
+                            a.type === "swipe_action" &&
+                            a.action === "like",
+                        ).length;
+                        return sum + likes;
+                      }, 0) / liveMetrics.topProducts.length;
+
+                    const avgLoveIts =
+                      liveMetrics.topProducts.reduce((sum, p) => {
+                        const loveIts = activities.filter(
+                          (a) =>
+                            a.productId === p.productId &&
+                            a.type === "swipe_action" &&
+                            a.action === "Love It",
+                        ).length;
+                        return sum + loveIts;
+                      }, 0) / liveMetrics.topProducts.length;
+
+                    const avgNopes =
+                      liveMetrics.topProducts.reduce((sum, p) => {
+                        const nopes = activities.filter(
+                          (a) =>
+                            a.productId === p.productId &&
+                            a.type === "swipe_action" &&
+                            a.action === "dislike",
+                        ).length;
+                        return sum + nopes;
+                      }, 0) / liveMetrics.topProducts.length;
+
+                    const avgConversionRate =
+                      liveMetrics.topProducts.reduce((sum, p) => {
+                        const totalSwipes = p.swipes;
+                        return (
+                          sum +
+                          (totalSwipes > 0
+                            ? (p.conversions / totalSwipes) * 100
+                            : 0)
+                        );
+                      }, 0) / liveMetrics.topProducts.length;
+
+                    return (
+                      <>
+                        <Card className="bg-gradient-to-br from-green-500/20 to-green-600/20 border-green-500/20">
+                          <CardContent className="p-4 text-center">
+                            <Heart className="w-6 h-6 text-green-400 mx-auto mb-2" />
+                            <div className="text-2xl font-bold text-white">
+                              {avgLikes.toFixed(1)}
+                            </div>
+                            <div className="text-xs text-green-300">
+                              Avg Likes per Product
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 border-purple-500/20">
+                          <CardContent className="p-4 text-center">
+                            <Star className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+                            <div className="text-2xl font-bold text-white">
+                              {avgLoveIts.toFixed(1)}
+                            </div>
+                            <div className="text-xs text-purple-300">
+                              Avg Love Its per Product
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-gradient-to-br from-red-500/20 to-red-600/20 border-red-500/20">
+                          <CardContent className="p-4 text-center">
+                            <X className="w-6 h-6 text-red-400 mx-auto mb-2" />
+                            <div className="text-2xl font-bold text-white">
+                              {avgNopes.toFixed(1)}
+                            </div>
+                            <div className="text-xs text-red-300">
+                              Avg Nopes per Product
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/20">
+                          <CardContent className="p-4 text-center">
+                            <Percent className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+                            <div className="text-2xl font-bold text-white">
+                              {avgConversionRate.toFixed(1)}%
+                            </div>
+                            <div className="text-xs text-blue-300">
+                              Avg Conversion Rate
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </>
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
           {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
