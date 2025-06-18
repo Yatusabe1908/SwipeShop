@@ -851,49 +851,63 @@ const AdminControlCenter = () => {
 
                     return (
                       <>
-                        <Card className="bg-gradient-to-br from-green-500/20 to-green-600/20 border-green-500/20">
+                        <Card className="bg-gray-800/60 backdrop-blur-sm border-green-500/30 shadow-lg shadow-green-500/10">
                           <CardContent className="p-4 text-center">
-                            <Heart className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-white">
+                            <div className="p-2 bg-green-500/20 rounded-lg inline-block mb-3">
+                              <Heart
+                                className="w-6 h-6 text-green-300"
+                                fill="currentColor"
+                              />
+                            </div>
+                            <div className="text-2xl font-bold text-green-200">
                               {avgLikes.toFixed(1)}
                             </div>
-                            <div className="text-xs text-green-300">
+                            <div className="text-sm text-gray-300 font-medium">
                               Avg Likes per Product
                             </div>
                           </CardContent>
                         </Card>
 
-                        <Card className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 border-purple-500/20">
+                        <Card className="bg-gray-800/60 backdrop-blur-sm border-purple-500/30 shadow-lg shadow-purple-500/10">
                           <CardContent className="p-4 text-center">
-                            <Star className="w-6 h-6 text-purple-400 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-white">
+                            <div className="p-2 bg-purple-500/20 rounded-lg inline-block mb-3">
+                              <Star
+                                className="w-6 h-6 text-purple-300"
+                                fill="currentColor"
+                              />
+                            </div>
+                            <div className="text-2xl font-bold text-purple-200">
                               {avgLoveIts.toFixed(1)}
                             </div>
-                            <div className="text-xs text-purple-300">
+                            <div className="text-sm text-gray-300 font-medium">
                               Avg Love Its per Product
                             </div>
                           </CardContent>
                         </Card>
 
-                        <Card className="bg-gradient-to-br from-red-500/20 to-red-600/20 border-red-500/20">
+                        <Card className="bg-gray-800/60 backdrop-blur-sm border-red-500/30 shadow-lg shadow-red-500/10">
                           <CardContent className="p-4 text-center">
-                            <X className="w-6 h-6 text-red-400 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-white">
+                            <div className="p-2 bg-red-500/20 rounded-lg inline-block mb-3">
+                              <X className="w-6 h-6 text-red-300" />
+                            </div>
+                            <div className="text-2xl font-bold text-red-200">
                               {avgNopes.toFixed(1)}
                             </div>
-                            <div className="text-xs text-red-300">
+                            <div className="text-sm text-gray-300 font-medium">
                               Avg Nopes per Product
                             </div>
                           </CardContent>
                         </Card>
 
-                        <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/20">
+                        <Card className="bg-gray-800/60 backdrop-blur-sm border-blue-500/30 shadow-lg shadow-blue-500/10">
                           <CardContent className="p-4 text-center">
-                            <Percent className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-white">
+                            <div className="p-2 bg-blue-500/20 rounded-lg inline-block mb-3">
+                              <Percent className="w-6 h-6 text-blue-300" />
+                            </div>
+                            <div className="text-2xl font-bold text-blue-200">
                               {avgConversionRate.toFixed(1)}%
                             </div>
-                            <div className="text-xs text-blue-300">
+                            <div className="text-sm text-gray-300 font-medium">
                               Avg Conversion Rate
                             </div>
                           </CardContent>
