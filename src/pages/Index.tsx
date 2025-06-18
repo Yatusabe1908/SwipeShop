@@ -18,6 +18,11 @@ import { useCartAndFavorites } from "@/hooks/useCartAndFavorites";
 import { useProductStats } from "@/hooks/useProductStats";
 import { Product, FilterOptions, SwipeDirection } from "@/lib/types";
 import { mockProducts } from "@/lib/mockData";
+import {
+  fetchShopifyProducts,
+  isShopifyEnvironment,
+  trackShopifyEvent,
+} from "@/lib/shopify";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -200,9 +205,8 @@ const Index = () => {
     "discover" | "cart" | "favorites"
   >("discover");
   const [products, setProducts] = useState<Product[]>([]);
-  const [shuffledProducts] = useState<Product[]>(() =>
-    shuffleArray(mockProducts),
-  );
+  const [shuffledProducts, setShuffledProducts] = useState<Product[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
@@ -225,6 +229,33 @@ const Index = () => {
     getCartTotal,
     isInCart,
   } = useCartAndFavorites();
+
+  // Load products from Shopify on component mount
+  useEffect(() => {
+    const loadProducts = async () => {
+      setIsLoadingProducts(true);
+      try {
+        if (isShopifyEnvironment()) {
+          const { products: shopifyProducts } = await fetchShopifyProducts(50);
+          const shuffled = shuffleArray(shopifyProducts);
+          setShuffledProducts(shuffled);
+        } else {
+          // Fallback to mock data for development
+          const shuffled = shuffleArray(mockProducts);
+          setShuffledProducts(shuffled);
+        }
+      } catch (error) {
+        console.error("Error loading products:", error);
+        // Fallback to mock data
+        const shuffled = shuffleArray(mockProducts);
+        setShuffledProducts(shuffled);
+      } finally {
+        setIsLoadingProducts(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
   // Filter products based on current filters (using shuffled products as base)
   useEffect(() => {
     let filteredProducts = [...shuffledProducts];
@@ -278,6 +309,15 @@ const Index = () => {
     }
 
     addInteraction(currentProduct.id, action);
+
+    // Track analytics event
+    trackShopifyEvent("swipe_action", currentProduct.id, {
+      action,
+      price: currentProduct.price,
+      vendor: currentProduct.vendor,
+      collection: currentProduct.collection,
+    });
+
     setCurrentImageIndex(0); // Reset image index for next product
     setCurrentProductIndex((prev) => {
       const newIndex = prev + 1;
@@ -347,6 +387,27 @@ const Index = () => {
           onBack={() => setCurrentView("discover")}
           isInCart={isInCart}
         />
+      </div>
+    );
+  }
+
+  // Show loading state while products are being fetched
+  if (isLoadingProducts) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center"
+          >
+            <Sparkles className="w-8 h-8 text-white" />
+          </motion.div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            Loading Products...
+          </h3>
+          <p className="text-gray-600">Fetching amazing products for you</p>
+        </div>
       </div>
     );
   }
