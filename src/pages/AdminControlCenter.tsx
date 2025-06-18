@@ -394,6 +394,12 @@ const AdminControlCenter = () => {
               Live Activity
             </TabsTrigger>
             <TabsTrigger
+              value="product-details"
+              className="data-[state=active]:bg-white/10"
+            >
+              Product Details
+            </TabsTrigger>
+            <TabsTrigger
               value="analytics"
               className="data-[state=active]:bg-white/10"
             >
