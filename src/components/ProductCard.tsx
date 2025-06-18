@@ -180,7 +180,7 @@ export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
       <>
         {/* Product Card */}
         <motion.div
-          ref={cardRef}
+          ref={ref}
           className={`absolute inset-0 cursor-grab active:cursor-grabbing select-none ${
             isTopCard ? "z-20" : "z-10"
           }`}
