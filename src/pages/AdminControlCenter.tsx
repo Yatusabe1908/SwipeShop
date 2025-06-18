@@ -34,6 +34,7 @@ import {
   CustomerActivity,
 } from "@/hooks/useRealTimeAnalytics";
 import { useProductStats } from "@/hooks/useProductStats";
+import LiveNotification from "@/components/LiveNotification";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +53,9 @@ const AdminControlCenter = () => {
       message: string;
       timestamp: Date;
     }>
+  >([]);
+  const [liveNotifications, setLiveNotifications] = useState<
+    CustomerActivity[]
   >([]);
 
   const { liveMetrics, activities, trackActivity } = useRealTimeAnalytics();
@@ -76,6 +80,24 @@ const AdminControlCenter = () => {
       metadata: { page: "admin_control_center", userType: "admin" },
     });
   }, [navigate, trackActivity]);
+
+  // Monitor for new activities and show live notifications
+  useEffect(() => {
+    const recentActivity = liveMetrics.recentActivity[0];
+    if (
+      recentActivity &&
+      !recentActivity.metadata?.userType && // Don't show admin activities
+      recentActivity.type !== "session_end" // Don't show session ends
+    ) {
+      setLiveNotifications((prev) => {
+        // Only show if it's not already shown
+        if (!prev.find((n) => n.id === recentActivity.id)) {
+          return [recentActivity, ...prev.slice(0, 2)]; // Keep max 3 notifications
+        }
+        return prev;
+      });
+    }
+  }, [liveMetrics.recentActivity]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -734,6 +756,22 @@ const AdminControlCenter = () => {
             </p>
           </div>
         </motion.div>
+      </div>
+
+      {/* Live Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {liveNotifications.map((activity, index) => (
+          <div key={activity.id} style={{ marginTop: `${index * 80}px` }}>
+            <LiveNotification
+              activity={activity}
+              onClose={() => {
+                setLiveNotifications((prev) =>
+                  prev.filter((n) => n.id !== activity.id),
+                );
+              }}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
