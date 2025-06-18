@@ -1,0 +1,156 @@
+<!-- SwipeShop Section for Shopify Themes -->
+<!-- Add this to your theme's sections folder -->
+
+<div class="swipeshop-widget" id="swipeshop-widget-{{ section.id }}">
+  <div class="swipeshop-header">
+    <h2 class="swipeshop-title">{{ section.settings.title | default: "Discover Products" }}</h2>
+    <p class="swipeshop-subtitle">{{ section.settings.subtitle | default: "Swipe through our amazing products" }}</p>
+  </div>
+  
+  <div id="swipeshop-container-{{ section.id }}"></div>
+</div>
+
+<script>
+  // Configuration for SwipeShop
+  window.SwipeShopConfig = {
+    shopDomain: '{{ shop.permanent_domain }}',
+    products: [
+      {% for product in collections[section.settings.collection].products limit: section.settings.product_limit %}
+        {
+          id: '{{ product.id }}',
+          handle: '{{ product.handle }}',
+          title: {{ product.title | json }},
+          price: {{ product.price | money_without_currency | remove: ',' }},
+          compare_at_price: {% if product.compare_at_price %}{{ product.compare_at_price | money_without_currency | remove: ',' }}{% else %}null{% endif %},
+          images: [
+            {% for image in product.images limit: 5 %}
+              {
+                src: {{ image | img_url: '800x800' | json }},
+                alt: {{ image.alt | json }}
+              }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ],
+          variants: [
+            {% for variant in product.variants %}
+              {
+                id: '{{ variant.id }}',
+                title: {{ variant.title | json }},
+                price: {{ variant.price | money_without_currency | remove: ',' }},
+                available: {{ variant.available | json }}
+              }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ],
+          vendor: {{ product.vendor | json }},
+          type: {{ product.type | json }},
+          tags: {{ product.tags | json }},
+          available: {{ product.available | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ],
+    theme: '{{ section.settings.theme }}',
+    autoplay: {{ section.settings.autoplay }},
+    showPrice: {{ section.settings.show_price }},
+    showVendor: {{ section.settings.show_vendor }}
+  };
+
+  // Initialize SwipeShop Widget
+  document.addEventListener('DOMContentLoaded', function() {
+    new SwipeShopWidget('swipeshop-container-{{ section.id }}', window.SwipeShopConfig);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "SwipeShop Widget",
+  "tag": "section",
+  "class": "swipeshop-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Discover Products"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Section Subtitle",
+      "default": "Swipe through our amazing products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Product Collection",
+      "info": "Select which collection to show in the SwipeShop widget"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Number of Products",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "theme",
+      "label": "Widget Theme",
+      "options": [
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "dark",
+          "label": "Dark"
+        },
+        {
+          "value": "auto",
+          "label": "Auto (matches theme)"
+        }
+      ],
+      "default": "light"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-advance products",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show product prices",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendors",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "SwipeShop Widget",
+      "settings": {
+        "title": "Discover Products",
+        "subtitle": "Swipe through our amazing products"
+      }
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .swipeshop-section {
+    margin: 40px 0;
+  }
+  
+  @media (max-width: 768px) {
+    .swipeshop-section {
+      margin: 20px 0;
+    }
+  }
+</style>
