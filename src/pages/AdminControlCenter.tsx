@@ -282,7 +282,7 @@ const AdminControlCenter = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => navigate("/")}
-                className="border-white/20 text-white hover:bg-white/10"
+                className="border-white/20 text-white hover:bg-white/10 bg-red-400"
               >
                 <Globe className="w-4 h-4 mr-2" />
                 Public Site
@@ -324,7 +324,7 @@ const AdminControlCenter = () => {
         >
           {/* Active Users */}
           <Card className="bg-gradient-to-br from-green-500/20 to-green-600/20 border-green-500/20">
-            <CardContent className="p-4 text-center">
+            <CardContent className="p-4 text-center text-green-200">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <Users className="w-5 h-5 text-green-400" />
@@ -332,18 +332,18 @@ const AdminControlCenter = () => {
               <div className="text-2xl font-bold text-white">
                 {liveMetrics.activeUsers}
               </div>
-              <div className="text-xs text-green-300">Active Users</div>
+              <div className="text-xs text-green-600">Active Users</div>
             </CardContent>
           </Card>
 
           {/* Total Sessions */}
           <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/20">
-            <CardContent className="p-4 text-center">
+            <CardContent className="p-4 text-center text-blue-800">
               <Activity className="w-5 h-5 text-blue-400 mx-auto mb-2" />
               <div className="text-2xl font-bold text-white">
                 {liveMetrics.totalSessions}
               </div>
-              <div className="text-xs text-blue-300">Sessions (24h)</div>
+              <div className="text-xs text-blue-500">Sessions (24h)</div>
             </CardContent>
           </Card>
 
@@ -354,7 +354,7 @@ const AdminControlCenter = () => {
               <div className="text-2xl font-bold text-white">
                 {formatDuration(liveMetrics.averageSessionDuration)}
               </div>
-              <div className="text-xs text-purple-300">Avg Session</div>
+              <div className="text-xs text-purple-600">Avg Session</div>
             </CardContent>
           </Card>
 
@@ -365,7 +365,7 @@ const AdminControlCenter = () => {
               <div className="text-2xl font-bold text-white">
                 {liveMetrics.totalSwipes}
               </div>
-              <div className="text-xs text-orange-300">Total Swipes</div>
+              <div className="text-xs text-orange-600">Total Swipes</div>
             </CardContent>
           </Card>
 
@@ -376,7 +376,7 @@ const AdminControlCenter = () => {
               <div className="text-2xl font-bold text-white">
                 {liveMetrics.conversionRate.toFixed(1)}%
               </div>
-              <div className="text-xs text-pink-300">Conversion</div>
+              <div className="text-xs text-pink-600">Conversion</div>
             </CardContent>
           </Card>
 
@@ -387,7 +387,7 @@ const AdminControlCenter = () => {
               <div className="text-2xl font-bold text-white">
                 {liveMetrics.recentActivity.length}
               </div>
-              <div className="text-xs text-indigo-300">Recent Events</div>
+              <div className="text-xs text-indigo-600">Recent Events</div>
             </CardContent>
           </Card>
         </motion.div>
