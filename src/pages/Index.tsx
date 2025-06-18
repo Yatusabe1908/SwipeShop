@@ -399,8 +399,8 @@ const Index = () => {
 
   // Track product views when a new product is shown
   useEffect(() => {
-    if (hasMoreProducts && remainingProducts[0]) {
-      const currentProduct = remainingProducts[0];
+    if (products.length > currentProductIndex) {
+      const currentProduct = products[currentProductIndex];
       trackActivity({
         type: "product_view",
         productId: currentProduct.id,
@@ -412,7 +412,7 @@ const Index = () => {
         },
       });
     }
-  }, [currentProductIndex, hasMoreProducts, remainingProducts, trackActivity]);
+  }, [currentProductIndex, products]); // Removed trackActivity and remainingProducts from dependencies
 
   if (currentView === "cart") {
     return (
