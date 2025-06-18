@@ -431,8 +431,8 @@ const AdminControlCenter = () => {
           </TabsList>
 
           {/* Live Activity Tab */}
-          <TabsContent value="live-activity" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TabsContent value="live-activity" className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Real-time Activity Feed */}
               <Card className="bg-black/20 border-white/10">
                 <CardHeader className="border-b border-white/10">
@@ -445,8 +445,8 @@ const AdminControlCenter = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <ScrollArea className="h-[500px]">
-                    <div className="p-4 space-y-3">
+                  <ScrollArea className="h-[400px] sm:h-[500px]">
+                    <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
                       {liveMetrics.recentActivity.length > 0 ? (
                         liveMetrics.recentActivity.map((activity, index) => (
                           <motion.div
@@ -454,21 +454,23 @@ const AdminControlCenter = () => {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                            className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
                           >
                             <div className="mt-1">
                               {getActivityIcon(activity.type)}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-white text-sm">
+                              <p className="text-white text-xs sm:text-sm">
                                 {getActivityMessage(activity)}
                               </p>
-                              <div className="flex items-center gap-2 mt-1">
+                              <div className="flex items-center gap-1 sm:gap-2 mt-1">
                                 <span className="text-xs text-gray-400">
                                   {formatTimeAgo(activity.timestamp)}
                                 </span>
-                                <span className="text-xs text-gray-500">•</span>
-                                <span className="text-xs text-gray-400">
+                                <span className="text-xs text-gray-500 hidden sm:inline">
+                                  •
+                                </span>
+                                <span className="text-xs text-gray-400 hidden sm:inline">
                                   {activity.sessionId.slice(-8)}
                                 </span>
                               </div>
@@ -1205,17 +1207,17 @@ const AdminControlCenter = () => {
 
         {/* Footer */}
         <motion.div
-          className="mt-12 p-6 bg-black/20 rounded-2xl border border-white/10"
+          className="mt-8 sm:mt-12 p-4 sm:p-6 bg-black/20 rounded-2xl border border-white/10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
           <div className="text-center">
-            <Lock className="w-8 h-8 text-purple-400 mx-auto mb-4" />
-            <h3 className="font-bold text-white mb-2">
+            <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 mx-auto mb-3 sm:mb-4" />
+            <h3 className="font-bold text-white mb-2 text-sm sm:text-base">
               🔐 Secure Admin Access
             </h3>
-            <p className="text-gray-300 text-sm">
+            <p className="text-gray-300 text-xs sm:text-sm">
               This control center provides real-time monitoring of all customer
               activities. Data is encrypted and only accessible to authorized
               administrators.
