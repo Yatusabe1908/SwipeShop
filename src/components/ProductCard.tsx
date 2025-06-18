@@ -42,7 +42,6 @@ export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
     const [isDragging, setIsDragging] = useState(false);
     const [lastTap, setLastTap] = useState(0);
     const [imageTransition, setImageTransition] = useState(false);
-    const cardRef = useRef<HTMLDivElement>(null);
 
     const x = useMotionValue(0);
     const y = useMotionValue(0);
