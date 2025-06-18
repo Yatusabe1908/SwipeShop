@@ -27,6 +27,13 @@ import {
   Shield,
   Lock,
   Settings,
+  Package,
+  TrendingDown,
+  ThumbsUp,
+  ThumbsDown,
+  Percent,
+  DollarSign,
+  Tag,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
