@@ -606,7 +606,7 @@ const AdminControlCenter = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all"
+                            className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border border-gray-600/50 hover:border-gray-500/70 hover:bg-gray-800/90 transition-all shadow-lg"
                           >
                             {/* Product Header */}
                             <div className="flex items-center gap-3 mb-4">
@@ -614,10 +614,10 @@ const AdminControlCenter = () => {
                                 #{index + 1}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h3 className="text-white font-semibold text-sm truncate">
+                                <h3 className="text-gray-100 font-semibold text-sm truncate">
                                   {product.title}
                                 </h3>
-                                <p className="text-gray-400 text-xs">
+                                <p className="text-gray-300 text-xs">
                                   {product.views} views • {totalActions} swipes
                                 </p>
                               </div>
@@ -626,29 +626,29 @@ const AdminControlCenter = () => {
                             {/* Engagement Score */}
                             <div className="mb-4">
                               <div className="flex items-center justify-between mb-2">
-                                <span className="text-gray-300 text-sm">
+                                <span className="text-gray-200 text-sm font-medium">
                                   Engagement Score
                                 </span>
                                 <span
-                                  className={`font-bold text-sm ${
+                                  className={`font-bold text-sm px-2 py-1 rounded-md ${
                                     engagementScore >= 70
-                                      ? "text-green-400"
+                                      ? "bg-green-500/20 text-green-300 border border-green-500/30"
                                       : engagementScore >= 40
-                                        ? "text-yellow-400"
-                                        : "text-red-400"
+                                        ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                                        : "bg-red-500/20 text-red-300 border border-red-500/30"
                                   }`}
                                 >
                                   {engagementScore.toFixed(1)}%
                                 </span>
                               </div>
-                              <div className="w-full bg-white/10 rounded-full h-2">
+                              <div className="w-full bg-gray-700/50 rounded-full h-3 border border-gray-600/30">
                                 <div
-                                  className={`h-2 rounded-full transition-all duration-500 ${
+                                  className={`h-full rounded-full transition-all duration-500 ${
                                     engagementScore >= 70
-                                      ? "bg-gradient-to-r from-green-400 to-green-500"
+                                      ? "bg-gradient-to-r from-green-400 to-green-500 shadow-green-500/30 shadow-sm"
                                       : engagementScore >= 40
-                                        ? "bg-gradient-to-r from-yellow-400 to-yellow-500"
-                                        : "bg-gradient-to-r from-red-400 to-red-500"
+                                        ? "bg-gradient-to-r from-yellow-400 to-yellow-500 shadow-yellow-500/30 shadow-sm"
+                                        : "bg-gradient-to-r from-red-400 to-red-500 shadow-red-500/30 shadow-sm"
                                   }`}
                                   style={{
                                     width: `${Math.min(engagementScore, 100)}%`,
@@ -660,60 +660,66 @@ const AdminControlCenter = () => {
                             {/* Action Breakdown */}
                             <div className="space-y-3">
                               {/* Love It Actions */}
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <Star
-                                    className="w-4 h-4 text-purple-400"
-                                    fill="currentColor"
-                                  />
-                                  <span className="text-gray-300 text-sm">
+                              <div className="flex items-center justify-between p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                                <div className="flex items-center gap-3">
+                                  <div className="p-1 bg-purple-500/20 rounded-md">
+                                    <Star
+                                      className="w-4 h-4 text-purple-300"
+                                      fill="currentColor"
+                                    />
+                                  </div>
+                                  <span className="text-gray-100 text-sm font-medium">
                                     Love It
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-purple-400 font-semibold text-sm">
+                                  <span className="text-purple-200 font-bold text-sm bg-purple-500/20 px-2 py-1 rounded">
                                     {loveItActions}
                                   </span>
-                                  <span className="text-gray-500 text-xs">
+                                  <span className="text-gray-300 text-xs">
                                     ({loveItPercent.toFixed(1)}%)
                                   </span>
                                 </div>
                               </div>
 
                               {/* Like Actions */}
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <Heart
-                                    className="w-4 h-4 text-green-400"
-                                    fill="currentColor"
-                                  />
-                                  <span className="text-gray-300 text-sm">
+                              <div className="flex items-center justify-between p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                                <div className="flex items-center gap-3">
+                                  <div className="p-1 bg-green-500/20 rounded-md">
+                                    <Heart
+                                      className="w-4 h-4 text-green-300"
+                                      fill="currentColor"
+                                    />
+                                  </div>
+                                  <span className="text-gray-100 text-sm font-medium">
                                     Like
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-green-400 font-semibold text-sm">
+                                  <span className="text-green-200 font-bold text-sm bg-green-500/20 px-2 py-1 rounded">
                                     {likeActions}
                                   </span>
-                                  <span className="text-gray-500 text-xs">
+                                  <span className="text-gray-300 text-xs">
                                     ({likePercent.toFixed(1)}%)
                                   </span>
                                 </div>
                               </div>
 
                               {/* Nope Actions */}
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <X className="w-4 h-4 text-red-400" />
-                                  <span className="text-gray-300 text-sm">
+                              <div className="flex items-center justify-between p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                                <div className="flex items-center gap-3">
+                                  <div className="p-1 bg-red-500/20 rounded-md">
+                                    <X className="w-4 h-4 text-red-300" />
+                                  </div>
+                                  <span className="text-gray-100 text-sm font-medium">
                                     Nope
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-red-400 font-semibold text-sm">
+                                  <span className="text-red-200 font-bold text-sm bg-red-500/20 px-2 py-1 rounded">
                                     {nopeActions}
                                   </span>
-                                  <span className="text-gray-500 text-xs">
+                                  <span className="text-gray-300 text-xs">
                                     ({nopePercent.toFixed(1)}%)
                                   </span>
                                 </div>
@@ -721,18 +727,18 @@ const AdminControlCenter = () => {
                             </div>
 
                             {/* Quick Stats */}
-                            <div className="mt-4 pt-4 border-t border-white/10">
+                            <div className="mt-4 pt-4 border-t border-gray-600/30">
                               <div className="grid grid-cols-2 gap-4 text-center">
-                                <div>
-                                  <div className="text-white font-bold text-lg">
+                                <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                                  <div className="text-blue-200 font-bold text-lg">
                                     {product.conversions}
                                   </div>
-                                  <div className="text-gray-400 text-xs">
+                                  <div className="text-gray-300 text-xs font-medium">
                                     Conversions
                                   </div>
                                 </div>
-                                <div>
-                                  <div className="text-white font-bold text-lg">
+                                <div className="p-3 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
+                                  <div className="text-indigo-200 font-bold text-lg">
                                     {totalActions > 0
                                       ? (
                                           (product.conversions / totalActions) *
@@ -741,7 +747,7 @@ const AdminControlCenter = () => {
                                       : 0}
                                     %
                                   </div>
-                                  <div className="text-gray-400 text-xs">
+                                  <div className="text-gray-300 text-xs font-medium">
                                     Conversion Rate
                                   </div>
                                 </div>
@@ -751,14 +757,14 @@ const AdminControlCenter = () => {
                             {/* Performance Indicator */}
                             <div className="mt-4">
                               <div
-                                className={`text-center py-2 px-3 rounded-lg text-xs font-medium ${
+                                className={`text-center py-3 px-4 rounded-lg text-sm font-bold border ${
                                   engagementScore >= 70
-                                    ? "bg-green-500/20 text-green-400"
+                                    ? "bg-green-500/20 text-green-200 border-green-500/40 shadow-green-500/10 shadow-lg"
                                     : engagementScore >= 40
-                                      ? "bg-yellow-500/20 text-yellow-400"
+                                      ? "bg-yellow-500/20 text-yellow-200 border-yellow-500/40 shadow-yellow-500/10 shadow-lg"
                                       : engagementScore >= 20
-                                        ? "bg-orange-500/20 text-orange-400"
-                                        : "bg-red-500/20 text-red-400"
+                                        ? "bg-orange-500/20 text-orange-200 border-orange-500/40 shadow-orange-500/10 shadow-lg"
+                                        : "bg-red-500/20 text-red-200 border-red-500/40 shadow-red-500/10 shadow-lg"
                                 }`}
                               >
                                 {engagementScore >= 70
