@@ -16,6 +16,8 @@ import { FavoritesPage } from "@/components/FavoritesPage";
 import { useNavigate } from "react-router-dom";
 import { useCartAndFavorites } from "@/hooks/useCartAndFavorites";
 import { useProductStats } from "@/hooks/useProductStats";
+import { useCartAndFavorites } from "@/hooks/useCartAndFavorites";
+import { useRealTimeAnalytics } from "@/hooks/useRealTimeAnalytics";
 import { Product, FilterOptions, SwipeDirection } from "@/lib/types";
 import { mockProducts } from "@/lib/mockData";
 import {
@@ -217,6 +219,7 @@ const Index = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const { addInteraction } = useProductStats();
+  const { trackActivity } = useRealTimeAnalytics();
   const {
     addToCart,
     addToFavorites,
@@ -296,6 +299,17 @@ const Index = () => {
       case "right":
         action = "like";
         addToFavorites(currentProduct);
+        // Track favorite action
+        trackActivity({
+          type: "favorite_add",
+          productId: currentProduct.id,
+          productTitle: currentProduct.title,
+          metadata: {
+            collection: currentProduct.collection,
+            price: currentProduct.price,
+            vendor: currentProduct.vendor,
+          },
+        });
         break;
       case "left":
         action = "dislike";
@@ -303,6 +317,17 @@ const Index = () => {
       case "up":
         action = "Love It";
         addToCart(currentProduct);
+        // Track cart action
+        trackActivity({
+          type: "cart_add",
+          productId: currentProduct.id,
+          productTitle: currentProduct.title,
+          metadata: {
+            collection: currentProduct.collection,
+            price: currentProduct.price,
+            vendor: currentProduct.vendor,
+          },
+        });
         break;
       default:
         return;
@@ -310,7 +335,20 @@ const Index = () => {
 
     addInteraction(currentProduct.id, action);
 
-    // Track analytics event
+    // Track swipe action
+    trackActivity({
+      type: "swipe_action",
+      productId: currentProduct.id,
+      productTitle: currentProduct.title,
+      action,
+      metadata: {
+        collection: currentProduct.collection,
+        price: currentProduct.price,
+        vendor: currentProduct.vendor,
+      },
+    });
+
+    // Track analytics event with Shopify
     trackShopifyEvent("swipe_action", currentProduct.id, {
       action,
       price: currentProduct.price,
@@ -359,6 +397,23 @@ const Index = () => {
 
   const remainingProducts = products.slice(currentProductIndex);
   const hasMoreProducts = remainingProducts.length > 0;
+
+  // Track product views when a new product is shown
+  useEffect(() => {
+    if (hasMoreProducts && remainingProducts[0]) {
+      const currentProduct = remainingProducts[0];
+      trackActivity({
+        type: "product_view",
+        productId: currentProduct.id,
+        productTitle: currentProduct.title,
+        metadata: {
+          collection: currentProduct.collection,
+          price: currentProduct.price,
+          vendor: currentProduct.vendor,
+        },
+      });
+    }
+  }, [currentProductIndex, hasMoreProducts, remainingProducts, trackActivity]);
 
   if (currentView === "cart") {
     return (
