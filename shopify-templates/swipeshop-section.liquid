@@ -1,0 +1,459 @@
+{% comment %}
+  SwipeShop Section for Shopify Themes
+  Place this file in your theme's sections/ folder as swipeshop-section.liquid
+{% endcomment %}
+
+{% assign swipeshop_url = section.settings.swipeshop_url | default: 'https://your-swipeshop-domain.com' %}
+{% assign collection_products = collections[section.settings.collection].products %}
+
+<div class="swipeshop-section" id="swipeshop-section-{{ section.id }}">
+  {% if section.settings.show_header %}
+    <div class="swipeshop-section-header">
+      {% if section.settings.title != blank %}
+        <h2 class="swipeshop-section-title">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.subtitle != blank %}
+        <p class="swipeshop-section-subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="swipeshop-widget-container" id="swipeshop-widget-{{ section.id }}">
+    <div class="swipeshop-widget-loading">
+      <div class="swipeshop-loading-spinner"></div>
+      <p>Loading SwipeShop widget...</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .swipeshop-section {
+    margin: {{ section.settings.margin_top }}px 0 {{ section.settings.margin_bottom }}px 0;
+    padding: 0 20px;
+  }
+
+  .swipeshop-section-header {
+    text-align: {{ section.settings.text_align }};
+    margin-bottom: 30px;
+  }
+
+  .swipeshop-section-title {
+    font-size: {{ section.settings.title_size }}px;
+    color: {{ section.settings.title_color }};
+    margin: 0 0 10px 0;
+    font-weight: 700;
+  }
+
+  .swipeshop-section-subtitle {
+    font-size: {{ section.settings.subtitle_size }}px;
+    color: {{ section.settings.subtitle_color }};
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .swipeshop-widget-container {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    background: {{ section.settings.background_color }};
+    border-radius: {{ section.settings.border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .swipeshop-widget-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .swipeshop-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .swipeshop-iframe {
+    width: 100%;
+    height: {{ section.settings.widget_height }}px;
+    border: none;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .swipeshop-section {
+      padding: 0 15px;
+    }
+    
+    .swipeshop-section-title {
+      font-size: {{ section.settings.title_size | minus: 4 }}px;
+    }
+    
+    .swipeshop-widget-container {
+      border-radius: {{ section.settings.border_radius | divided_by: 2 }}px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('swipeshop-widget-{{ section.id }}');
+    const loadingElement = container.querySelector('.swipeshop-widget-loading');
+    
+    // Prepare products data
+    const products = [
+      {% for product in collection_products limit: section.settings.product_limit %}
+        {
+          id: "{{ product.id }}",
+          handle: "{{ product.handle }}",
+          title: {{ product.title | json }},
+          price: {{ product.price | money_without_currency | remove: ',' }},
+          compare_at_price: {% if product.compare_at_price %}{{ product.compare_at_price | money_without_currency | remove: ',' }}{% else %}null{% endif %},
+          images: [
+            {% for image in product.images limit: 5 %}
+              "{{ image | img_url: '500x500' }}"{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ],
+          vendor: {{ product.vendor | json }},
+          available: {{ product.available }},
+          tags: {{ product.tags | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ];
+
+    // Build iframe URL
+    const params = new URLSearchParams({
+      shop: '{{ shop.permanent_domain }}',
+      theme: 'section',
+      section_id: '{{ section.id }}',
+      embedded: 'true',
+      collection: '{{ section.settings.collection }}',
+      limit: '{{ section.settings.product_limit }}'
+    });
+
+    {% if customer %}
+    params.set('customer_id', '{{ customer.id }}');
+    {% endif %}
+
+    // Create iframe
+    const iframe = document.createElement('iframe');
+    iframe.className = 'swipeshop-iframe';
+    iframe.src = '{{ swipeshop_url }}/widget?' + params.toString();
+    iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+
+    // Handle iframe load
+    iframe.onload = function() {
+      loadingElement.style.display = 'none';
+      container.appendChild(iframe);
+      
+      // Send products data to iframe
+      setTimeout(() => {
+        iframe.contentWindow.postMessage({
+          type: 'SECTION_PRODUCTS',
+          products: products,
+          settings: {
+            collection: '{{ section.settings.collection }}',
+            limit: {{ section.settings.product_limit }}
+          }
+        }, '{{ swipeshop_url }}');
+      }, 1000);
+    };
+
+    // Handle iframe error
+    iframe.onerror = function() {
+      loadingElement.innerHTML = `
+        <div style="text-align: center; color: white;">
+          <p>Unable to load SwipeShop widget</p>
+          <a href="{{ routes.collections_url }}" style="color: white; text-decoration: underline;">Browse all products</a>
+        </div>
+      `;
+    };
+
+    // Listen for messages from iframe
+    window.addEventListener('message', function(event) {
+      if (event.origin !== '{{ swipeshop_url }}') return;
+
+      switch (event.data.type) {
+        case 'SWIPESHOP_ADD_TO_CART':
+          addToShopifyCart(event.data.variantId, event.data.product);
+          break;
+
+        case 'SWIPESHOP_VIEW_PRODUCT':
+          window.location.href = `/products/${event.data.productHandle}`;
+          break;
+
+        case 'SWIPESHOP_RESIZE':
+          if (event.data.height && event.data.sectionId === '{{ section.id }}') {
+            iframe.style.height = event.data.height + 'px';
+          }
+          break;
+      }
+    });
+
+    // Function to add to Shopify cart
+    async function addToShopifyCart(variantId, product) {
+      try {
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: variantId,
+            quantity: 1
+          })
+        });
+
+        if (response.ok) {
+          // Success feedback
+          showNotification(`${product.title} added to cart!`, 'success');
+          
+          // Update cart if possible
+          if (window.theme && window.theme.cart) {
+            window.theme.cart.refresh();
+          }
+          
+          // Send success to iframe
+          iframe.contentWindow.postMessage({
+            type: 'CART_ADD_SUCCESS',
+            product: product
+          }, '{{ swipeshop_url }}');
+        } else {
+          throw new Error('Failed to add to cart');
+        }
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        showNotification('Error adding to cart', 'error');
+        
+        iframe.contentWindow.postMessage({
+          type: 'CART_ADD_ERROR',
+          error: error.message
+        }, '{{ swipeshop_url }}');
+      }
+    }
+
+    // Simple notification function
+    function showNotification(message, type) {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        font-size: 14px;
+        font-weight: 500;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+      `;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+      }, 10);
+      
+      setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "SwipeShop Widget",
+  "tag": "section",
+  "class": "swipeshop-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "SwipeShop Configuration"
+    },
+    {
+      "type": "url",
+      "id": "swipeshop_url",
+      "label": "SwipeShop URL",
+      "default": "https://your-swipeshop-domain.com",
+      "info": "Your SwipeShop application URL"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Product Collection",
+      "info": "Select which products to show in SwipeShop"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Number of Products",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show section header",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Discover Products with SwipeShop"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Swipe to find products you'll love"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Subtitle size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "widget_height",
+      "label": "Widget height",
+      "min": 400,
+      "max": 800,
+      "step": 20,
+      "default": 600,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 300,
+      "max": 1200,
+      "step": 50,
+      "default": 800,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Top margin",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Bottom margin",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "SwipeShop Widget",
+      "settings": {
+        "title": "Discover Products with SwipeShop",
+        "subtitle": "Swipe to find products you'll love",
+        "collection": "featured",
+        "product_limit": 50
+      }
+    }
+  ]
+}
+{% endschema %}

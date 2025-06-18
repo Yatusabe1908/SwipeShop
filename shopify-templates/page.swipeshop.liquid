@@ -1,0 +1,282 @@
+{% comment %}
+  SwipeShop Page Template for Shopify
+  Place this file in your theme's templates/ folder as page.swipeshop.liquid
+{% endcomment %}
+
+{% assign swipeshop_url = 'https://your-swipeshop-domain.com' %}
+{% assign collection_handle = 'featured' %}
+
+<!DOCTYPE html>
+<html lang="{{ shop.locale }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} - {{ shop.name }}</title>
+  
+  {% comment %} SEO Meta Tags {% endcomment %}
+  <meta name="description" content="Discover amazing products with SwipeShop - the fun way to shop at {{ shop.name }}">
+  <meta property="og:title" content="{{ page.title }} - {{ shop.name }}">
+  <meta property="og:description" content="Discover amazing products with SwipeShop">
+  <meta property="og:image" content="{{ 'swipeshop-og-image.png' | asset_url }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  
+  {% comment %} Include theme CSS {% endcomment %}
+  {{ 'application.css' | asset_url | stylesheet_tag }}
+  
+  {% comment %} SwipeShop specific styles {% endcomment %}
+  <style>
+    .swipeshop-fullpage {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      border: none;
+      display: block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .swipeshop-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    .swipeshop-loading-content {
+      text-align: center;
+    }
+    
+    .swipeshop-spinner {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 20px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    body.swipeshop-page {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    
+    .swipeshop-header {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .swipeshop-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #6366f1;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    
+    .swipeshop-back-btn:hover {
+      color: #4f46e5;
+      transform: translateX(-2px);
+    }
+    
+    @media (max-width: 768px) {
+      .swipeshop-header {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body class="swipeshop-page">
+  {% comment %} Back to store button {% endcomment %}
+  <div class="swipeshop-header">
+    <a href="{{ routes.root_url }}" class="swipeshop-back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m12 19-7-7 7-7"/>
+        <path d="M19 12H5"/>
+      </svg>
+      Back to {{ shop.name }}
+    </a>
+  </div>
+
+  {% comment %} Loading state {% endcomment %}
+  <div id="swipeshop-loading" class="swipeshop-loading">
+    <div class="swipeshop-loading-content">
+      <div class="swipeshop-spinner"></div>
+      <h2>Loading SwipeShop...</h2>
+      <p>Preparing your personalized shopping experience</p>
+    </div>
+  </div>
+
+  {% comment %} Main SwipeShop iframe {% endcomment %}
+  <iframe 
+    id="swipeshop-app"
+    class="swipeshop-fullpage"
+    style="display: none;"
+    frameborder="0"
+    allow="accelerometer; autoplay; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+    sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-same-origin allow-scripts allow-top-navigation"
+  ></iframe>
+
+  {% comment %} Configuration and initialization {% endcomment %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const iframe = document.getElementById('swipeshop-app');
+      const loading = document.getElementById('swipeshop-loading');
+      
+      // Build SwipeShop URL with parameters
+      const params = new URLSearchParams({
+        shop: '{{ shop.permanent_domain }}',
+        theme: 'shopify',
+        embedded: 'page',
+        collection: '{{ collection_handle }}',
+        currency: '{{ shop.currency }}',
+        locale: '{{ shop.locale }}'
+      });
+
+      {% comment %} Add customer info if logged in {% endcomment %}
+      {% if customer %}
+      params.set('customer_id', '{{ customer.id }}');
+      params.set('customer_tags', '{{ customer.tags | join: "," }}');
+      {% endif %}
+
+      {% comment %} Set iframe source {% endcomment %}
+      iframe.src = '{{ swipeshop_url }}/widget?' + params.toString();
+      
+      {% comment %} Handle iframe load {% endcomment %}
+      iframe.onload = function() {
+        loading.style.display = 'none';
+        iframe.style.display = 'block';
+      };
+
+      {% comment %} Handle iframe errors {% endcomment %}
+      iframe.onerror = function() {
+        loading.innerHTML = `
+          <div class="swipeshop-loading-content">
+            <h2>Unable to load SwipeShop</h2>
+            <p>Please check your internet connection and try again.</p>
+            <a href="{{ routes.root_url }}" style="color: white; text-decoration: underline;">Return to store</a>
+          </div>
+        `;
+      };
+
+      {% comment %} Listen for messages from SwipeShop {% endcomment %}
+      window.addEventListener('message', function(event) {
+        if (event.origin !== '{{ swipeshop_url }}') return;
+        
+        switch (event.data.type) {
+          case 'SWIPESHOP_ADD_TO_CART':
+            addToCart(event.data.variantId, event.data.product);
+            break;
+            
+          case 'SWIPESHOP_CONTINUE_SHOPPING':
+            window.location.href = '{{ routes.collections_url }}';
+            break;
+            
+          case 'SWIPESHOP_RESIZE':
+            if (event.data.height) {
+              iframe.style.height = event.data.height + 'px';
+            }
+            break;
+        }
+      });
+
+      {% comment %} Function to add items to Shopify cart {% endcomment %}
+      async function addToCart(variantId, product) {
+        try {
+          const response = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: variantId,
+              quantity: 1
+            })
+          });
+
+          if (response.ok) {
+            {% comment %} Send success message back to SwipeShop {% endcomment %}
+            iframe.contentWindow.postMessage({
+              type: 'CART_ADD_SUCCESS',
+              product: product
+            }, '{{ swipeshop_url }}');
+            
+            {% comment %} Update cart count if element exists {% endcomment %}
+            const cartCount = document.querySelector('.cart-count, [data-cart-count]');
+            if (cartCount) {
+              const currentCount = parseInt(cartCount.textContent) || 0;
+              cartCount.textContent = currentCount + 1;
+            }
+          }
+        } catch (error) {
+          console.error('Error adding to cart:', error);
+          iframe.contentWindow.postMessage({
+            type: 'CART_ADD_ERROR',
+            error: error.message
+          }, '{{ swipeshop_url }}');
+        }
+      }
+
+      {% comment %} Set timeout for loading state {% endcomment %}
+      setTimeout(function() {
+        if (loading.style.display !== 'none') {
+          loading.innerHTML = `
+            <div class="swipeshop-loading-content">
+              <h2>Taking longer than expected...</h2>
+              <p>SwipeShop is loading. Please wait a moment.</p>
+              <a href="{{ routes.root_url }}" style="color: white; text-decoration: underline;">Return to store</a>
+            </div>
+          `;
+        }
+      }, 10000);
+    });
+
+    {% comment %} Analytics tracking {% endcomment %}
+    {% if settings.gtag_id %}
+    gtag('config', '{{ settings.gtag_id }}', {
+      page_title: 'SwipeShop - {{ page.title }}',
+      page_location: '{{ canonical_url }}'
+    });
+    {% endif %}
+  </script>
+
+  {% comment %} Schema.org markup {% endcomment %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ page.title }}",
+    "description": "Discover amazing products with SwipeShop",
+    "url": "{{ canonical_url }}",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "{{ shop.name }}",
+      "url": "{{ shop.url }}"
+    }
+  }
+  </script>
+</body>
+</html>
