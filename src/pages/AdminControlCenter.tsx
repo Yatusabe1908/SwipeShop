@@ -251,41 +251,40 @@ const AdminControlCenter = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Header */}
       <div className="bg-black/20 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <motion.div
-              className="flex items-center gap-4"
+              className="flex items-center gap-2 sm:gap-4"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-xl shadow-lg">
-                <Shield className="w-7 h-7 text-white" />
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 sm:p-3 rounded-xl shadow-lg">
+                <Shield className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-2xl font-bold text-white truncate">
                   🔐 Admin Control Center
                 </h1>
-                <p className="text-sm text-gray-300">
-                  Real-time customer activity monitoring • Last update:{" "}
-                  {lastUpdate.toLocaleTimeString()}
+                <p className="text-xs sm:text-sm text-gray-300 truncate">
+                  Real-time monitoring • {lastUpdate.toLocaleTimeString()}
                 </p>
               </div>
             </motion.div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 text-green-400 bg-green-400/10 px-3 py-1 rounded-full">
+            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
+              <div className="flex items-center gap-1 sm:gap-2 text-green-400 bg-green-400/10 px-2 sm:px-3 py-1 rounded-full flex-shrink-0">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium">LIVE</span>
+                <span className="text-xs sm:text-sm font-medium">LIVE</span>
               </div>
 
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => navigate("/")}
-                className="border-white/20 text-white hover:bg-white/10 bg-red-400"
+                className="border-white/20 text-white hover:bg-white/10 bg-red-400 text-xs sm:text-sm flex-shrink-0"
               >
-                <Globe className="w-4 h-4 mr-2" />
-                Public Site
+                <Globe className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Public Site</span>
               </Button>
 
               <Button
@@ -293,32 +292,32 @@ const AdminControlCenter = () => {
                 size="sm"
                 onClick={handleRefresh}
                 disabled={refreshing}
-                className="border-blue-400/20 text-blue-400 hover:bg-blue-400/10"
+                className="border-blue-400/20 text-blue-400 hover:bg-blue-400/10 text-xs sm:text-sm flex-shrink-0"
               >
                 <RefreshCw
-                  className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`}
+                  className={`w-3 h-3 sm:w-4 sm:h-4 ${refreshing ? "animate-spin" : ""} ${refreshing ? "" : "sm:mr-2"}`}
                 />
-                Refresh
+                <span className="hidden sm:inline">Refresh</span>
               </Button>
 
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleExportData}
-                className="border-purple-400/20 text-purple-400 hover:bg-purple-400/10"
+                className="border-purple-400/20 text-purple-400 hover:bg-purple-400/10 text-xs sm:text-sm flex-shrink-0"
               >
-                <Download className="w-4 h-4 mr-2" />
-                Export
+                <Download className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Export</span>
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-3 sm:p-6">
         {/* Live Metrics Dashboard */}
         <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -393,37 +392,41 @@ const AdminControlCenter = () => {
         </motion.div>
 
         {/* Main Dashboard Tabs */}
-        <Tabs defaultValue="product-details" className="space-y-6">
-          <TabsList className="bg-black/20 border-white/10">
+        <Tabs defaultValue="product-details" className="space-y-4 sm:space-y-6">
+          <TabsList className="bg-black/20 border-white/10 w-full overflow-x-auto flex justify-start">
             <TabsTrigger
               value="live-activity"
-              className="data-[state=active]:bg-white/10"
+              className="data-[state=active]:bg-white/10 text-xs sm:text-sm flex-shrink-0"
             >
-              Live Activity
+              <span className="hidden sm:inline">Live Activity</span>
+              <span className="sm:hidden">Live</span>
             </TabsTrigger>
             <TabsTrigger
               value="product-details"
-              className="data-[state=active]:bg-white/10"
+              className="data-[state=active]:bg-white/10 text-xs sm:text-sm flex-shrink-0"
             >
-              Product Details
+              <span className="hidden sm:inline">Product Details</span>
+              <span className="sm:hidden">Products</span>
             </TabsTrigger>
             <TabsTrigger
               value="analytics"
-              className="data-[state=active]:bg-white/10"
+              className="data-[state=active]:bg-white/10 text-xs sm:text-sm flex-shrink-0"
             >
               Analytics
             </TabsTrigger>
             <TabsTrigger
               value="top-products"
-              className="data-[state=active]:bg-white/10"
+              className="data-[state=active]:bg-white/10 text-xs sm:text-sm flex-shrink-0"
             >
-              Top Products
+              <span className="hidden sm:inline">Top Products</span>
+              <span className="sm:hidden">Top</span>
             </TabsTrigger>
             <TabsTrigger
               value="notifications"
-              className="data-[state=active]:bg-white/10"
+              className="data-[state=active]:bg-white/10 text-xs sm:text-sm flex-shrink-0"
             >
-              Notifications
+              <span className="hidden sm:inline">Notifications</span>
+              <span className="sm:hidden">Alerts</span>
             </TabsTrigger>
           </TabsList>
 
@@ -561,9 +564,9 @@ const AdminControlCenter = () => {
                     </Badge>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6">
+                <CardContent className="p-3 sm:p-6">
                   {liveMetrics.topProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                       {liveMetrics.topProducts.map((product, index) => {
                         const totalActions = product.swipes;
                         const likeActions = activities.filter(
@@ -606,15 +609,15 @@ const AdminControlCenter = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border border-gray-600/50 hover:border-gray-500/70 hover:bg-gray-800/90 transition-all shadow-lg"
+                            className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-gray-600/50 hover:border-gray-500/70 hover:bg-gray-800/90 transition-all shadow-lg"
                           >
                             {/* Product Header */}
-                            <div className="flex items-center gap-3 mb-4">
-                              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold">
+                            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                              <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-xs sm:text-sm">
                                 #{index + 1}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h3 className="text-gray-100 font-semibold text-sm truncate">
+                                <h3 className="text-gray-100 font-semibold text-xs sm:text-sm truncate">
                                   {product.title}
                                 </h3>
                                 <p className="text-gray-300 text-xs">
@@ -624,13 +627,13 @@ const AdminControlCenter = () => {
                             </div>
 
                             {/* Engagement Score */}
-                            <div className="mb-4">
+                            <div className="mb-3 sm:mb-4">
                               <div className="flex items-center justify-between mb-2">
-                                <span className="text-gray-200 text-sm font-medium">
+                                <span className="text-gray-200 text-xs sm:text-sm font-medium">
                                   Engagement Score
                                 </span>
                                 <span
-                                  className={`font-bold text-sm px-2 py-1 rounded-md ${
+                                  className={`font-bold text-xs sm:text-sm px-1.5 sm:px-2 py-1 rounded-md ${
                                     engagementScore >= 70
                                       ? "bg-green-500/20 text-green-300 border border-green-500/30"
                                       : engagementScore >= 40
@@ -641,7 +644,7 @@ const AdminControlCenter = () => {
                                   {engagementScore.toFixed(1)}%
                                 </span>
                               </div>
-                              <div className="w-full bg-gray-700/50 rounded-full h-3 border border-gray-600/30">
+                              <div className="w-full bg-gray-700/50 rounded-full h-2 sm:h-3 border border-gray-600/30">
                                 <div
                                   className={`h-full rounded-full transition-all duration-500 ${
                                     engagementScore >= 70
@@ -658,22 +661,22 @@ const AdminControlCenter = () => {
                             </div>
 
                             {/* Action Breakdown */}
-                            <div className="space-y-3">
+                            <div className="space-y-2 sm:space-y-3">
                               {/* Love It Actions */}
-                              <div className="flex items-center justify-between p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                                <div className="flex items-center gap-3">
+                              <div className="flex items-center justify-between p-2 sm:p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                                <div className="flex items-center gap-2 sm:gap-3">
                                   <div className="p-1 bg-purple-500/20 rounded-md">
                                     <Star
-                                      className="w-4 h-4 text-purple-300"
+                                      className="w-3 h-3 sm:w-4 sm:h-4 text-purple-300"
                                       fill="currentColor"
                                     />
                                   </div>
-                                  <span className="text-gray-100 text-sm font-medium">
+                                  <span className="text-gray-100 text-xs sm:text-sm font-medium">
                                     Love It
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-purple-200 font-bold text-sm bg-purple-500/20 px-2 py-1 rounded">
+                                <div className="flex items-center gap-1 sm:gap-2">
+                                  <span className="text-purple-200 font-bold text-xs sm:text-sm bg-purple-500/20 px-1.5 sm:px-2 py-1 rounded">
                                     {loveItActions}
                                   </span>
                                   <span className="text-gray-300 text-xs">
@@ -683,20 +686,20 @@ const AdminControlCenter = () => {
                               </div>
 
                               {/* Like Actions */}
-                              <div className="flex items-center justify-between p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                                <div className="flex items-center gap-3">
+                              <div className="flex items-center justify-between p-2 sm:p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                                <div className="flex items-center gap-2 sm:gap-3">
                                   <div className="p-1 bg-green-500/20 rounded-md">
                                     <Heart
-                                      className="w-4 h-4 text-green-300"
+                                      className="w-3 h-3 sm:w-4 sm:h-4 text-green-300"
                                       fill="currentColor"
                                     />
                                   </div>
-                                  <span className="text-gray-100 text-sm font-medium">
+                                  <span className="text-gray-100 text-xs sm:text-sm font-medium">
                                     Like
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-green-200 font-bold text-sm bg-green-500/20 px-2 py-1 rounded">
+                                <div className="flex items-center gap-1 sm:gap-2">
+                                  <span className="text-green-200 font-bold text-xs sm:text-sm bg-green-500/20 px-1.5 sm:px-2 py-1 rounded">
                                     {likeActions}
                                   </span>
                                   <span className="text-gray-300 text-xs">
@@ -706,17 +709,17 @@ const AdminControlCenter = () => {
                               </div>
 
                               {/* Nope Actions */}
-                              <div className="flex items-center justify-between p-3 bg-red-500/10 rounded-lg border border-red-500/20">
-                                <div className="flex items-center gap-3">
+                              <div className="flex items-center justify-between p-2 sm:p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                                <div className="flex items-center gap-2 sm:gap-3">
                                   <div className="p-1 bg-red-500/20 rounded-md">
-                                    <X className="w-4 h-4 text-red-300" />
+                                    <X className="w-3 h-3 sm:w-4 sm:h-4 text-red-300" />
                                   </div>
-                                  <span className="text-gray-100 text-sm font-medium">
+                                  <span className="text-gray-100 text-xs sm:text-sm font-medium">
                                     Nope
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-red-200 font-bold text-sm bg-red-500/20 px-2 py-1 rounded">
+                                <div className="flex items-center gap-1 sm:gap-2">
+                                  <span className="text-red-200 font-bold text-xs sm:text-sm bg-red-500/20 px-1.5 sm:px-2 py-1 rounded">
                                     {nopeActions}
                                   </span>
                                   <span className="text-gray-300 text-xs">
@@ -727,18 +730,18 @@ const AdminControlCenter = () => {
                             </div>
 
                             {/* Quick Stats */}
-                            <div className="mt-4 pt-4 border-t border-gray-600/30">
-                              <div className="grid grid-cols-2 gap-4 text-center">
-                                <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                                  <div className="text-blue-200 font-bold text-lg">
+                            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-600/30">
+                              <div className="grid grid-cols-2 gap-2 sm:gap-4 text-center">
+                                <div className="p-2 sm:p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                                  <div className="text-blue-200 font-bold text-sm sm:text-lg">
                                     {product.conversions}
                                   </div>
                                   <div className="text-gray-300 text-xs font-medium">
                                     Conversions
                                   </div>
                                 </div>
-                                <div className="p-3 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
-                                  <div className="text-indigo-200 font-bold text-lg">
+                                <div className="p-2 sm:p-3 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
+                                  <div className="text-indigo-200 font-bold text-sm sm:text-lg">
                                     {totalActions > 0
                                       ? (
                                           (product.conversions / totalActions) *
@@ -755,9 +758,9 @@ const AdminControlCenter = () => {
                             </div>
 
                             {/* Performance Indicator */}
-                            <div className="mt-4">
+                            <div className="mt-3 sm:mt-4">
                               <div
-                                className={`text-center py-3 px-4 rounded-lg text-sm font-bold border ${
+                                className={`text-center py-2 sm:py-3 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-bold border ${
                                   engagementScore >= 70
                                     ? "bg-green-500/20 text-green-200 border-green-500/40 shadow-green-500/10 shadow-lg"
                                     : engagementScore >= 40
@@ -802,7 +805,7 @@ const AdminControlCenter = () => {
 
               {/* Detailed Statistics Cards */}
               {liveMetrics.topProducts.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                   {/* Average Metrics */}
                   {(() => {
                     const avgLikes =
