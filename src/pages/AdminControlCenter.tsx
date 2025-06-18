@@ -989,53 +989,109 @@ const AdminControlCenter = () => {
           <TabsContent value="top-products" className="space-y-6">
             <Card className="bg-black/20 border-white/10">
               <CardHeader>
-                <CardTitle className="text-white">
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Award className="w-5 h-5" />
                   Top Performing Products
+                  <Badge className="bg-yellow-500/20 text-yellow-400 ml-auto">
+                    Ranked by Performance
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {liveMetrics.topProducts.length > 0 ? (
-                    liveMetrics.topProducts.map((product, index) => (
-                      <div
-                        key={product.productId}
-                        className="flex items-center gap-4 p-4 rounded-lg bg-white/5"
-                      >
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-500/20 text-purple-400 font-bold">
-                          {index + 1}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-white font-medium">
-                            {product.title}
-                          </h3>
-                          <div className="flex items-center gap-4 mt-1 text-sm">
-                            <span className="text-blue-400">
-                              {product.views} views
-                            </span>
-                            <span className="text-purple-400">
-                              {product.swipes} swipes
-                            </span>
-                            <span className="text-green-400">
-                              {product.conversions} conversions
-                            </span>
+                    liveMetrics.topProducts.map((product, index) => {
+                      const totalSwipes = product.swipes;
+                      const conversionRate =
+                        totalSwipes > 0
+                          ? (product.conversions / totalSwipes) * 100
+                          : 0;
+                      const performance =
+                        conversionRate >= 70
+                          ? "excellent"
+                          : conversionRate >= 40
+                            ? "good"
+                            : conversionRate >= 20
+                              ? "average"
+                              : "poor";
+
+                      return (
+                        <div
+                          key={product.productId}
+                          className="flex items-center gap-4 p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-all"
+                        >
+                          <div
+                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm ${
+                              index === 0
+                                ? "bg-yellow-500/20 text-yellow-400"
+                                : index === 1
+                                  ? "bg-gray-400/20 text-gray-300"
+                                  : index === 2
+                                    ? "bg-orange-500/20 text-orange-400"
+                                    : "bg-purple-500/20 text-purple-400"
+                            }`}
+                          >
+                            {index < 3
+                              ? index === 0
+                                ? "🥇"
+                                : index === 1
+                                  ? "🥈"
+                                  : "🥉"
+                              : `#${index + 1}`}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-white font-medium">
+                              {product.title}
+                            </h3>
+                            <div className="flex items-center gap-4 mt-1 text-sm">
+                              <span className="text-blue-400">
+                                {product.views} views
+                              </span>
+                              <span className="text-purple-400">
+                                {product.swipes} swipes
+                              </span>
+                              <span className="text-green-400">
+                                {product.conversions} conversions
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div
+                              className={`font-bold text-lg ${
+                                performance === "excellent"
+                                  ? "text-green-400"
+                                  : performance === "good"
+                                    ? "text-yellow-400"
+                                    : performance === "average"
+                                      ? "text-orange-400"
+                                      : "text-red-400"
+                              }`}
+                            >
+                              {conversionRate.toFixed(1)}%
+                            </div>
+                            <div
+                              className={`text-xs px-2 py-1 rounded-full ${
+                                performance === "excellent"
+                                  ? "bg-green-500/20 text-green-400"
+                                  : performance === "good"
+                                    ? "bg-yellow-500/20 text-yellow-400"
+                                    : performance === "average"
+                                      ? "bg-orange-500/20 text-orange-400"
+                                      : "bg-red-500/20 text-red-400"
+                              }`}
+                            >
+                              {performance === "excellent"
+                                ? "Excellent"
+                                : performance === "good"
+                                  ? "Good"
+                                  : performance === "average"
+                                    ? "Average"
+                                    : "Needs Work"}
+                            </div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-white font-bold">
-                            {product.swipes > 0
-                              ? (
-                                  (product.conversions / product.swipes) *
-                                  100
-                                ).toFixed(1)
-                              : 0}
-                            %
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            conversion
-                          </div>
-                        </div>
-                      </div>
-                    ))
+                      );
+                    })
                   ) : (
                     <div className="text-center py-12 text-gray-400">
                       <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-30" />
@@ -1043,9 +1099,30 @@ const AdminControlCenter = () => {
                       <p className="text-sm mt-1">
                         Data will appear as customers interact with products
                       </p>
+                      <div className="mt-4 text-xs">
+                        <p>🥇 Top performers get gold medals</p>
+                        <p>
+                          📊 Check "Product Details" tab for in-depth analysis
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
+
+                {liveMetrics.topProducts.length > 0 && (
+                  <div className="mt-6 p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                    <div className="flex items-center gap-2 text-blue-400 mb-2">
+                      <Eye className="w-4 h-4" />
+                      <span className="font-medium">Pro Tip</span>
+                    </div>
+                    <p className="text-sm text-gray-300">
+                      Para ver análisis detallados de cada producto (likes, love
+                      its, nopes), ve a la pestaña{" "}
+                      <strong>"Product Details"</strong> donde puedes analizar
+                      el comportamiento específico de tus clientes.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
