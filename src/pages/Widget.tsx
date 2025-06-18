@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { FilterPanel } from "@/components/FilterPanel";
 import { useCartAndFavorites } from "@/hooks/useCartAndFavorites";
 import { useProductStats } from "@/hooks/useProductStats";
+import { useRealTimeAnalytics } from "@/hooks/useRealTimeAnalytics";
 import { Product, FilterOptions, SwipeDirection } from "@/lib/types";
 import {
   fetchShopifyProducts,
@@ -43,6 +44,7 @@ const Widget = () => {
   const [shopifyConfig, setShopifyConfig] = useState<any>({});
 
   const { addInteraction } = useProductStats();
+  const { trackActivity } = useRealTimeAnalytics();
   const {
     addToCart,
     addToFavorites,
@@ -129,6 +131,20 @@ const Widget = () => {
         action = "like";
         addToFavorites(currentProduct);
 
+        // Track favorite action
+        trackActivity({
+          type: "favorite_add",
+          productId: currentProduct.id,
+          productTitle: currentProduct.title,
+          metadata: {
+            widget: true,
+            embedded: true,
+            shopify: isShopifyEnvironment(),
+            collection: currentProduct.collection,
+            price: currentProduct.price,
+          },
+        });
+
         // Notify parent window (Shopify)
         if (window.parent !== window) {
           window.parent.postMessage(
@@ -149,6 +165,20 @@ const Widget = () => {
       case "up":
         action = "Love It";
         addToCart(currentProduct);
+
+        // Track cart action
+        trackActivity({
+          type: "cart_add",
+          productId: currentProduct.id,
+          productTitle: currentProduct.title,
+          metadata: {
+            widget: true,
+            embedded: true,
+            shopify: isShopifyEnvironment(),
+            collection: currentProduct.collection,
+            price: currentProduct.price,
+          },
+        });
 
         // Try to add to Shopify cart if in Shopify environment
         try {
@@ -179,7 +209,23 @@ const Widget = () => {
 
     addInteraction(currentProduct.id, action);
 
-    // Track analytics event
+    // Track swipe action
+    trackActivity({
+      type: "swipe_action",
+      productId: currentProduct.id,
+      productTitle: currentProduct.title,
+      action,
+      metadata: {
+        widget: true,
+        embedded: true,
+        shopify: isShopifyEnvironment(),
+        collection: currentProduct.collection,
+        price: currentProduct.price,
+        vendor: currentProduct.vendor,
+      },
+    });
+
+    // Track analytics event with Shopify
     trackShopifyEvent("swipe_action", currentProduct.id, {
       action,
       price: currentProduct.price,
