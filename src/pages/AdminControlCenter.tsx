@@ -393,7 +393,7 @@ const AdminControlCenter = () => {
         </motion.div>
 
         {/* Main Dashboard Tabs */}
-        <Tabs defaultValue="live-activity" className="space-y-6">
+        <Tabs defaultValue="product-details" className="space-y-6">
           <TabsList className="bg-black/20 border-white/10">
             <TabsTrigger
               value="live-activity"
