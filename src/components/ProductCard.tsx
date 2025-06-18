@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, forwardRef } from "react";
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import {
   Heart,
@@ -20,13 +20,13 @@ interface ProductCardProps {
   onImageChange?: (index: number) => void;
 }
 
-export const ProductCard = ({
+export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({
   product,
   onSwipe,
   isTopCard,
   currentImageIndex: externalImageIndex,
   onImageChange,
-}: ProductCardProps) => {
+}, ref) => {
   const [internalImageIndex, setInternalImageIndex] = useState(0);
 
   // Use external image index if provided, otherwise use internal state
