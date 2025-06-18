@@ -16,7 +16,6 @@ import { FavoritesPage } from "@/components/FavoritesPage";
 import { useNavigate } from "react-router-dom";
 import { useCartAndFavorites } from "@/hooks/useCartAndFavorites";
 import { useProductStats } from "@/hooks/useProductStats";
-import { useCartAndFavorites } from "@/hooks/useCartAndFavorites";
 import { useRealTimeAnalytics } from "@/hooks/useRealTimeAnalytics";
 import { Product, FilterOptions, SwipeDirection } from "@/lib/types";
 import { mockProducts } from "@/lib/mockData";
