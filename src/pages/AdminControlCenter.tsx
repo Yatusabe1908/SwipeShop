@@ -34,6 +34,7 @@ import {
   Percent,
   DollarSign,
   Tag,
+  Award,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
