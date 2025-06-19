@@ -55,7 +55,7 @@ const ShopifyDashboard = () => {
         // This would use Shopify's Admin API
         const response = await fetch("/api/shopify/products", {
           headers: {
-            Authorization: `Bearer ${process.env.SHOPIFY_ACCESS_TOKEN}`,
+            Authorization: `Bearer ${import.meta.env.VITE_SHOPIFY_ACCESS_TOKEN}`,
             "Content-Type": "application/json",
           },
         });
